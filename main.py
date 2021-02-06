@@ -2,6 +2,7 @@
 # Milestone 1: Build an index and query the index for links
 
 import json
+import pickle
 import re
 import codecs
 from bs4 import BeautifulSoup
@@ -20,18 +21,18 @@ stopWords = {'ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there'
              'doing', 'it', 'how', 'further', 'was', 'here', 'than'}
 
 def main():
+    
     lemmatizer = WordNetLemmatizer()
     
     path = "webpages/WEBPAGES_RAW/bookkeeping.json"
     with open(path) as file:
         data = json.load(file)
 
-    final_tokens = []   # put inside double for loop
-    invertedIdx = dict()        # token: [doc_id1, doc_id2]   # change value to linked list?
+    invertedIdx = dict()        # token: [doc_id1, doc_id2] 
     pathToWebpages = "webpages/WEBPAGES_RAW/"
     
-    for folder in range(75):     # 75
-        for file in range(500):  # 500
+    for folder in range(75):     
+        for file in range(500):  
             currentIdx = str(folder) + "/" + str(file)
             fileName = pathToWebpages + currentIdx
             url = data[currentIdx]
@@ -44,36 +45,28 @@ def main():
             
             for token in tokens:
                 # check for alphanumeric tokens and remove stop words
-                if len(token) > 1 and re.match("^[A-Za-z]*$", token) and token not in stopWords:
-                    currentToken = lemmatizer.lemmatize(token.lower())
-                    final_tokens.append(currentToken)    # lemmatize and lower
+                if len(token) > 1 and re.match("^[A-Za-z]*$", token) and token.lower() not in stopWords:
+                    currentToken = lemmatizer.lemmatize(token.lower())      # lemmatize and lower
 
                     # insert in inverted index with doc_id
                     if currentToken not in invertedIdx:
-                        invertedIdx[currentToken] = []
-                    # check if doc_id already stored for token
-                    if currentIdx not in invertedIdx[currentToken]:
-                        invertedIdx[currentToken].append(currentIdx)
+                        invertedIdx[currentToken] = {currentIdx: 1}
+                    else:
+                        # check if doc_id already stored for token
+                        if currentIdx not in invertedIdx[currentToken]:
+                            invertedIdx[currentToken][currentIdx] = 1
+                        else:
+                            invertedIdx[currentToken][currentIdx] += 1
 
             file.close()
 
             if currentIdx == "74/496":
                 break
 
-    print("\n\n\n", invertedIdx, "\n\n\n")
-
-    # User query
-    query = input("Enter your search query: \n")
-    while(query != 'q'):
-        if query not in invertedIdx:
-            print("\nSorry, we couldn't find anything related to your search.")
-        else:
-            print("\nHere's what we found:")
-            resultCount = 0
-            for result in invertedIdx[query]:
-                resultCount += 1
-                print(str(resultCount) + ". ", data[result])
-        query = input("\n\nEnter your search query: \n")
+    # store to pickle
+    f = open("invertedIdx.pkl","wb")
+    pickle.dump(invertedIdx, f)
+    f.close()
     
 
 if __name__ == "__main__":
