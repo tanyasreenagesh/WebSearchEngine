@@ -83,7 +83,7 @@ def main():
         
 
     # store invertedIdx to invertedIdx.pkl
-    f = open("tempInvertedIdx.pkl","wb")
+    f = open("invertedIdx.pkl","wb")
     pickle.dump(invertedIdx, f)
     f.close()
 
