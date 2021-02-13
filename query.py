@@ -9,7 +9,7 @@ with open(path) as file:
     data = json.load(file)
         
 # load from pickle
-file = open("tempInvertedIdx.pkl",'rb')
+file = open("invertedIdx.pkl",'rb')
 invertedIdx = pickle.load(file)
 
 print("Number of unique words: ", len(invertedIdx))
