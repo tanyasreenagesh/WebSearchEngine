@@ -39,12 +39,13 @@ def main():
     documentsInIdx = set()          # tracks set of documents containing valid words
     pathToWebpages = '/Users/Aishah/Documents/GitHub/webpages/WEBPAGES_RAW/' #"webpages/WEBPAGES_RAW/"
     
+
     for folder in range(2):        # 75 
         for file in range(500):     # 500
             currentIdx = str(folder) + "/" + str(file)
             fileName = pathToWebpages + currentIdx
             url = data[currentIdx]
-            # print(str(currentIdx), " : ", url)
+            print(str(currentIdx), " : ", url)
 
             file = codecs.open(fileName, "r", "utf-8")
     
@@ -113,9 +114,7 @@ def main():
             numOfTokens = 0    # tracks the number of valid tokens in each doc_id
             
             for token in tokens:
-                if(token == "DifferentThe"):
-                    print(str(currentIdx), " : ", url)
-                    print(token)
+
                 # check for alphanumeric tokens and remove stop words
                 if len(token) > 1 and re.match("^[A-Za-z]*$", token) and token.lower() not in stopWords:
                     currentToken = lemmatizer.lemmatize(token.lower())      # lemmatize and lower
@@ -140,13 +139,22 @@ def main():
             file.close()
             
             # Below, increment the score for each document if the token is in the doc and it's h1, h2, or h3.
+            
             for token in h1_tokens:
-                if(token in tempInvertedIdx.keys()):
-                    tempInvertedIdx[token][currentIdx][1] += 5
+                try:
+                    if(token in tempInvertedIdx.keys()):
+                        tempInvertedIdx[token][currentIdx][1] += 5
+                except:
+                    
+                    pass
 
             for token in h2_tokens:
-                if(token in tempInvertedIdx.keys()):
-                    tempInvertedIdx[token][currentIdx][1] += 4
+                try:
+                    if(token in tempInvertedIdx.keys()):
+                        tempInvertedIdx[token][currentIdx][1] += 4
+                except:
+                    
+                    pass
 
             for token in h3_tokens:
                 try:
@@ -154,6 +162,7 @@ def main():
                         # print(token)
                         tempInvertedIdx[token][currentIdx][1] += 3
                 except:
+                    
                     pass
 
     
@@ -171,7 +180,10 @@ def main():
             tf = tempInvertedIdx[term][doc][0]/validTokensInDoc[doc]
             invertedIdx[term][doc] = [round(tf*idf,7), tempInvertedIdx[term][doc][1]]     # store it in the final invertedIdx
 
-    # print(invertedIdx)
+    #print(invertedIdx)
+    #print()
+    #print()
+    print("count: ", count)
     
         
 
