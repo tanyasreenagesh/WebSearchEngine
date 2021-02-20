@@ -1,14 +1,10 @@
 # Builds the inverted index
 
 
-import json
+from processing import *
 import pickle
-import re
-import codecs
-from bs4 import BeautifulSoup
-from nltk import word_tokenize
-from nltk.stem import WordNetLemmatizer
 import math
+
 
 stopWords = {'ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there', 'about', 'once', 'during', 'out',
              'very', 'having', 'with', 'they', 'own', 'an', 'be', 'some', 'for', 'do', 'its', 'yours', 'such', 'into',
@@ -32,6 +28,7 @@ def main():
     path = "/Users/Aishah/Documents/GitHub/webpages/WEBPAGES_RAW/bookkeeping.json"#"webpages/WEBPAGES_RAW/bookkeeping.json"
     with open(path) as file:
         data = json.load(file)
+
 
     tempInvertedIdx = dict()
     invertedIdx = dict()            # {token: {doc_id1: [tf_idf1, word_importance_score], doc_id2: tf_idf2}}
@@ -110,14 +107,17 @@ def main():
 
             content = soup.get_text()
             tokens = word_tokenize(content)
+
             
+            tokens = getTokens(currentIdx)
             numOfTokens = 0    # tracks the number of valid tokens in each doc_id
             
             for token in tokens:
 
                 # check for alphanumeric tokens and remove stop words
-                if len(token) > 1 and re.match("^[A-Za-z]*$", token) and token.lower() not in stopWords:
-                    currentToken = lemmatizer.lemmatize(token.lower())      # lemmatize and lower
+                currentToken = validToken(token)
+                
+                if currentToken:
                     numOfTokens += 1
                     
                     
@@ -183,8 +183,6 @@ def main():
                     
                     pass
 
-    
-
             if currentIdx == "74/496":
                 break
 
@@ -199,14 +197,11 @@ def main():
             invertedIdx[term][doc] = round(tf*idf*tempInvertedIdx[term][doc][1],7)#, tempInvertedIdx[term][doc][1]]     # store it in the final invertedIdx
 
     print(invertedIdx)
-    #print()
-    #print()
-    #print("count: ", count)
-    
+
         
 
     # store invertedIdx to invertedIdx.pkl
-    f = open("invertedIdx.pkl","wb")
+    f = open("tempInvertedIdx.pkl","wb")
     pickle.dump(invertedIdx, f)
     f.close()
 

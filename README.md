@@ -14,3 +14,9 @@ To run the search engine:
 python query.py
 ~~~
 Type 'q' in the query to end the program.
+
+TO-DO:
+1. Change tf formula to log
+2. Complete weighing for important html tags
+3. Indices of occurrence within the document
+4. Extra credit (GUI, indexing anchor words, etc.)
