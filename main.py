@@ -40,8 +40,8 @@ def main():
     pathToWebpages = '/Users/Aishah/Documents/GitHub/webpages/WEBPAGES_RAW/' #"webpages/WEBPAGES_RAW/"
     
 
-    for folder in range(2):        # 75 
-        for file in range(500):     # 500
+    for folder in range(1):        # 75 
+        for file in range(250):     # 500
             currentIdx = str(folder) + "/" + str(file)
             fileName = pathToWebpages + currentIdx
             url = data[currentIdx]
@@ -125,9 +125,9 @@ def main():
                     if currentToken not in tempInvertedIdx:
                         #if (currentToken in h1_tokens):
                         #    print(currentToken, " : ", 'True', end = ', ')
-                        tempInvertedIdx[currentToken] = {currentIdx: [1, 0]} # Initiate the score for each token to 0. 
+                        tempInvertedIdx[currentToken] = {currentIdx: [1, 1]} # Initiate the score for each token to 0. 
                     elif currentIdx not in tempInvertedIdx[currentToken]:
-                        tempInvertedIdx[currentToken][currentIdx] = [1, 0]
+                        tempInvertedIdx[currentToken][currentIdx] = [1, 1]
                     else:
                         tempInvertedIdx[currentToken][currentIdx][0] += 1
                     
@@ -164,6 +164,24 @@ def main():
                 except:
                     
                     pass
+            
+            for token in b_tokens:
+                try:
+                    if(token in tempInvertedIdx.keys()):
+                        # print(token)
+                        tempInvertedIdx[token][currentIdx][1] += 2
+                except:
+                    
+                    pass
+
+            for token in title_tokens:
+                try:
+                    if(token in tempInvertedIdx.keys()):
+                        # print(token)
+                        tempInvertedIdx[token][currentIdx][1] += 6
+                except:
+                    
+                    pass
 
     
 
@@ -178,12 +196,12 @@ def main():
         idf = math.log(numOfDocs/(len(tempInvertedIdx[term])+1))
         for doc in tempInvertedIdx[term]:
             tf = tempInvertedIdx[term][doc][0]/validTokensInDoc[doc]
-            invertedIdx[term][doc] = [round(tf*idf,7), tempInvertedIdx[term][doc][1]]     # store it in the final invertedIdx
+            invertedIdx[term][doc] = round(tf*idf*tempInvertedIdx[term][doc][1],7)#, tempInvertedIdx[term][doc][1]]     # store it in the final invertedIdx
 
-    #print(invertedIdx)
+    print(invertedIdx)
     #print()
     #print()
-    print("count: ", count)
+    #print("count: ", count)
     
         
 
