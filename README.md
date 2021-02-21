@@ -20,3 +20,15 @@ Type 'q' in the query to end the program.
 1. Change tf formula to log
 2. Extra credit (GUI, indexing anchor words, etc.)
 3. Modify file directory tree (as specified in project description)
+
+
+### Instructions for TA/Grading Team:
+
+Install the following (using pip/conda):
+1. pyarrow
+2. bs4
+3. nltk
+4. pandas
+
+Run main.py to create the inverted index (the index will be saved as a feather file).
+Run query.py to input search queries and get results.
