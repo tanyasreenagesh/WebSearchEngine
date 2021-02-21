@@ -31,4 +31,5 @@ Install the following (using pip/conda):
 4. pandas
 
 Run main.py to create the inverted index (the index will be saved as a feather file).
+
 Run query.py to input search queries and get results.
