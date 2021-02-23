@@ -25,10 +25,8 @@ Type 'q' in the query to end the program.
 ### Instructions for TA/Grading Team:
 
 Install the following (using pip/conda):
-1. pyarrow
-2. bs4
-3. nltk
-4. pandas
+1. bs4
+2. pandas
 
 Run main.py to create the inverted index (the index will be saved as a feather file).
 
