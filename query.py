@@ -1,21 +1,18 @@
 # Queries the inverted index
 
 from processing import *
-import pickle
-import operator
-import math
 
 path = "webpages/WEBPAGES_RAW/bookkeeping.json"
 with open(path) as file:
     data = json.load(file)
         
-# load from pickle
-file = open("tempInvertedIdx.pkl",'rb')
-invertedIdx = pickle.load(file)
+# load and decompress invertedIdx and docIdx from pickle files
+invertedIdx = decompressPickle('invertedIdx.pbz2')
+docIdx = decompressPickle('docIdx.pbz2')
 
-print("Number of unique words: ", len(invertedIdx))
-
-print("Inverted Index: \n", invertedIdx)
+numOfDocs = invertedIdx['numOfDocs']
+print("Number of docs = ", numOfDocs)
+print("Number of tokens = ",len(invertedIdx))
 
 # User query
 rawQuery = input("\n\n\nEnter your search query: \n")
@@ -29,35 +26,24 @@ while(rawQuery != 'q'):
         if token:
             query.append(token)
 
-    # compute cosine similarities
-    scores = dict()         # {doc_id: cosine_score}
-
     # calculate query tf-idf scores
     query_wt = dict()
     for q in query:
-        if q in invertedIdx:
-            tf = query.count(q)/len(q)
-            idf = math.log(invertedIdx['numOfDocs']/(len(invertedIdx[q])+1)) 
+        if q in invertedIdx:      
+            tf = query.count(q)/len(query)     
+            idf = math.log(numOfDocs/(len(invertedIdx[q])+1)) 
             query_wt[q] = round(tf*idf,7)
 
-    # calculate document tf-idf scores
+
+    # compute cosine similarities
+    scores = dict()         # {doc_id: cosine_score}
+    
     for q in query_wt:
-        doc_wt = dict()
-
         for doc in invertedIdx[q]:
-            tokens = getTokens(doc, False)
-            for token in tokens:
-                currentToken = validToken(token)
-                if currentToken:
-                    doc_wt[currentToken] = invertedIdx[currentToken][doc]
-
-            # calculate cosine similarity between doc and query
-            scores[doc] = 0
-            for q in query_wt:
-                if q in doc_wt:
-                    scores[doc] += doc_wt[q] * query_wt[q]
-            
-    #print(scores)
+            if doc in scores:
+                scores[doc] += invertedIdx[q][doc] * query_wt[q]
+            else:
+                scores[doc] = invertedIdx[q][doc] * query_wt[q]
 
     # display the top 20 results by scores rank
     if len(scores) == 0:
@@ -70,7 +56,6 @@ while(rawQuery != 'q'):
             if resultCount > 20:
                 break
             print(str(resultCount) + ". ", data[k])
-            #print(k,v)
 
     # get user input until 'q' is entered
     rawQuery = input("\n\nEnter your search query: \n")

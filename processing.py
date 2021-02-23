@@ -4,6 +4,14 @@ import json
 import codecs
 from bs4 import BeautifulSoup
 from nltk import word_tokenize
+from datetime import datetime
+import bz2
+import pickle
+import _pickle as cPickle
+import operator
+import math
+import pandas as pd
+import numpy as np
 
 path = "webpages/WEBPAGES_RAW/bookkeeping.json"
 with open(path) as file:
@@ -45,7 +53,7 @@ def getTokens(docID, output=True):
     url = data[docID]
     
     if output:
-        print(str(docID), " : ", url)
+        print(datetime.now().strftime("%H:%M"), str(docID), " : ", url)
 
     file = codecs.open(fileName, "r", "utf-8")
 
@@ -68,3 +76,14 @@ def assignWeights(invertedIdx, doc, inputList):
         for token in tokens:
             if token in invertedIdx and doc in invertedIdx[token]:
                 invertedIdx[token][doc][1] += weight
+
+
+def compressPickle(fName, data):
+    with bz2.BZ2File(fName + '.pbz2', 'w') as f: 
+        cPickle.dump(data, f)
+
+
+def decompressPickle(fName):
+    data = bz2.BZ2File(fName, 'rb')
+    data = cPickle.load(data)
+    return data
