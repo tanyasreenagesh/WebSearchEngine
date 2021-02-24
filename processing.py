@@ -28,6 +28,8 @@ stopWords = {'ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there'
              'which', 'those', 'i', 'after', 'few', 'whom', 't', 'being', 'if', 'theirs', 'my', 'against', 'a', 'by',
              'doing', 'it', 'how', 'further', 'was', 'here', 'than'}
 
+
+# Returns the lemmatized token if token is valid, False otherwise
 def validToken(token):
     if type(token) == str and len(token) > 1 and re.match("^[A-Za-z]*$", token) and token.lower() not in stopWords:
         lemmatizer = WordNetLemmatizer()
@@ -35,6 +37,8 @@ def validToken(token):
     else:
         return False
 
+
+# returns list of valid tokens from HTML content
 def getTextFromTags(soup, tag):
     textInTag = list(''.join(s.findAll(text=True)) for s in soup.findAll(tag))
     allTokens = []
@@ -47,6 +51,8 @@ def getTextFromTags(soup, tag):
             tagTokens.append(currToken)
     return tagTokens
 
+
+# Returns tokens from docID including lists of tokens in important HTML tags
 def getTokens(docID, output=True):
     pathToWebpages = "webpages/WEBPAGES_RAW/"
     fileName = pathToWebpages + docID
@@ -71,6 +77,8 @@ def getTokens(docID, output=True):
     
     return word_tokenize(content), title_tokens, b_tokens, h1_tokens, h2_tokens, h3_tokens
 
+
+# Assigns weights to tokens in important HTML tags
 def assignWeights(invertedIdx, doc, inputList):
     for tokens,weight in inputList:
         for token in tokens:
@@ -78,12 +86,108 @@ def assignWeights(invertedIdx, doc, inputList):
                 invertedIdx[token][doc][1] += weight
 
 
+# Compresses a pickle file
 def compressPickle(fName, data):
     with bz2.BZ2File(fName + '.pbz2', 'w') as f: 
         cPickle.dump(data, f)
 
 
+# Decompresses a pickle file
 def decompressPickle(fName):
     data = bz2.BZ2File(fName, 'rb')
     data = cPickle.load(data)
     return data
+
+
+# Inserts the (token,doc) pair into the index
+def insertToken(token, doc, idx):
+    if token not in idx:
+        idx[token] = {doc: [1,1]} 
+    elif doc not in idx[token]:
+        idx[token][doc] = [1,1]
+    else:
+        idx[token][doc][0] += 1
+
+
+# Returns tf-idf scores for tokens in index
+def computeIndexScores(tempInvertedIdx, numOfValidDocs):
+    invertedIdx = dict()            # {token:   {doc_id1:   tf_idf1}}
+    docIdx = dict()                 # {doc_id:  {token:     tf-idf}}
+
+    # store the tf-idf score (rounded to nearest 7 digits)
+    for term in tempInvertedIdx:
+        invertedIdx[term] = {}
+        idf = math.log(numOfValidDocs/len(tempInvertedIdx[term]))
+        for doc in tempInvertedIdx[term]:
+            tf = 1+math.log(tempInvertedIdx[term][doc][0])
+            invertedIdx[term][doc] = round(tf*idf*tempInvertedIdx[term][doc][1],7)
+            
+            # add to docIdx
+            if doc not in docIdx:
+                docIdx[doc] = dict()
+            docIdx[doc][term] = invertedIdx[term][doc]
+            
+    return invertedIdx, docIdx
+
+
+# Returns tf-idf scores for tokens in query
+def computeQueryScores(rawQuery,invertedIdx,numOfDocs):
+    rawQuery = word_tokenize(rawQuery)
+    
+    # remove stop words, non-alpha words, etc.
+    query = []
+    for q in rawQuery:
+        token = validToken(q)
+        if token:
+            query.append(token)
+
+    # calculate query tf-idf scores
+    query_wt = dict()
+    for q in query:
+        if q in invertedIdx:      
+            tf = 1+math.log(query.count(q))    
+            idf = math.log(numOfDocs/len(invertedIdx[q])) 
+            query_wt[q] = round(tf*idf,7)
+    return query_wt
+
+
+# Normalizes document tf-idf scores for all documents
+def normalizeIndexScores(invertedIdx, docIdx):
+    for doc in docIdx:
+        norm = 1/math.sqrt(sum(i*i for i in docIdx[doc].values()))
+        for token in docIdx[doc]:
+            invertedIdx[token][doc] = round(norm*invertedIdx[token][doc],7)
+
+
+# Normalizes query tf-idf scores
+def normalizeQueryScores(query_wt):
+    norm = 1/math.sqrt(sum(i*i for i in query_wt.values()))
+    for q in query_wt:
+        query_wt[q] = round(norm*query_wt[q],7)
+
+
+# Returns cosine similarity of query and all the docs in the index
+def getCosineSimilarity(query_wt, invertedIdx):
+    scores = dict()         # {doc_id: cosine_score}
+    
+    for q in query_wt:
+        for doc in invertedIdx[q]:
+            if doc in scores:
+                scores[doc] += invertedIdx[q][doc] * query_wt[q]
+            else:
+                scores[doc] = invertedIdx[q][doc] * query_wt[q]
+    return scores
+
+
+# Displays the top 20 results of the query, ranked by scores
+def showResults(scores):
+    if len(scores) == 0:
+        print("\nSorry, we couldn't find anything related to your search.")
+    else:
+        resultCount = 0
+        print("Number of URLs retrieved = ", len(scores))
+        for k,v in sorted(scores.items(), key=operator.itemgetter(1), reverse=True):
+            resultCount += 1
+            if resultCount > 20:
+                break
+            print(str(resultCount) + ". ", data[k])
