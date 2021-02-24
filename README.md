@@ -17,9 +17,8 @@ Type 'q' in the query to end the program.
 
 
 ### TO-DO:
-1. Change tf formula to log
-2. Extra credit (GUI, indexing anchor words, etc.)
-3. Modify file directory tree (as specified in project description)
+1. Extra credit (GUI, indexing anchor words, etc.)
+2. Modify file directory tree (as specified in project description)
 
 
 ### Instructions for TA/Grading Team:
