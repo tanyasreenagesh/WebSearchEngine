@@ -11,7 +11,7 @@ Unless any changes have been made to the way we create our inverted index, there
 
 To run the search engine: 
 ~~~
-python query.py
+python gui.py
 ~~~
 Type 'q' in the query to end the program.
 
@@ -26,7 +26,8 @@ Type 'q' in the query to end the program.
 Install the following (using pip/conda):
 1. bs4
 2. pandas
+3. nltk
 
 Run main.py to create the inverted index (the index will be saved as a feather file).
 
-Run query.py to input search queries and get results.
+Run gui.py to input search queries and get results.
