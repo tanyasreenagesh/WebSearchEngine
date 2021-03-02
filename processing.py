@@ -28,6 +28,7 @@ stopWords = {'ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there'
              'which', 'those', 'i', 'after', 'few', 'whom', 't', 'being', 'if', 'theirs', 'my', 'against', 'a', 'by',
              'doing', 'it', 'how', 'further', 'was', 'here', 'than'}
 
+pathToWebpages = "webpages/WEBPAGES_RAW/"
 
 # Returns the lemmatized token if token is valid, False otherwise
 def validToken(token):
@@ -54,7 +55,6 @@ def getTextFromTags(soup, tag):
 
 # Returns tokens from docID including lists of tokens in important HTML tags
 def getTokens(docID, output=True):
-    pathToWebpages = "webpages/WEBPAGES_RAW/"
     fileName = pathToWebpages + docID
     url = data[docID]
     
@@ -179,15 +179,38 @@ def getCosineSimilarity(query_wt, invertedIdx):
     return scores
 
 
+# Gets the title of the doc
+def getTitle(soup):
+    return ''.join(list(''.join(s.findAll(text=True)) for s in soup.findAll('title')))
+
+
+# Gets the description of the doc
+def getDescription(soup):
+    try:
+        text = soup.find('p').get_text()
+        text = text.partition('.')[0] + '.'
+    except:
+        text = ''
+    return text
+
+
 # Displays the top 20 results of the query, ranked by scores
-def showResults(scores):
-    if len(scores) == 0:
-        print("\nSorry, we couldn't find anything related to your search.")
-    else:
-        resultCount = 0
-        print("Number of URLs retrieved = ", len(scores))
-        for k,v in sorted(scores.items(), key=operator.itemgetter(1), reverse=True):
-            resultCount += 1
-            if resultCount > 20:
-                break
-            print(str(resultCount) + ". ", data[k])
+def formatResults(scores, data):
+    results = ""
+    resultCount = 0
+
+    print("Number of URLs retrieved = ", len(scores))
+    # k contains the doc_id
+    for k,v in sorted(scores.items(), key=operator.itemgetter(1), reverse=True):
+        resultCount += 1
+        if resultCount > 20:
+            break
+        #print(str(resultCount) + ". ", data[k])
+
+        # Process url to make soup
+        url = data[k]
+        fileName = pathToWebpages + k        
+        file = codecs.open(fileName, "r", "utf-8")
+        soup = BeautifulSoup(file.read(), features="lxml")
+
+        yield getTitle(soup), data[k], getDescription(soup)
