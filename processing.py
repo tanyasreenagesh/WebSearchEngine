@@ -12,6 +12,8 @@ import operator
 import math
 import pandas as pd
 import numpy as np
+import tkinter as tk
+from tkinter import *
 
 path = "webpages/WEBPAGES_RAW/bookkeeping.json"
 with open(path) as file:
@@ -179,28 +181,31 @@ def getCosineSimilarity(query_wt, invertedIdx):
     return scores
 
 
+# Makes text more readable
+def format(text):
+    return text.strip().replace("\n", " ").replace("\t", " ").capitalize()
+
+
 # Gets the title of the doc
 def getTitle(soup):
-    return ''.join(list(''.join(s.findAll(text=True)) for s in soup.findAll('title')))
+    return format(soup.find('title').get_text())
 
 
 # Gets the description of the doc
 def getDescription(soup):
     try:
-        text = soup.find('p').get_text()
+        text = format(soup.find('p').get_text())
         text = text.partition('.')[0] + '.'
     except:
         text = ''
     return text
 
 
-# Displays the top 20 results of the query, ranked by scores
-def formatResults(scores, data):
+# Returns the top 20 results of the query, ranked by scores
+def rankResults(scores, data):
     results = ""
     resultCount = 0
 
-    print("Number of URLs retrieved = ", len(scores))
-    # k contains the doc_id
     for k,v in sorted(scores.items(), key=operator.itemgetter(1), reverse=True):
         resultCount += 1
         if resultCount > 20:
