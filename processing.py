@@ -183,7 +183,10 @@ def getCosineSimilarity(query_wt, invertedIdx):
 
 # Makes text more readable
 def format(text):
-    return text.strip().replace("\n", " ").replace("\t", " ").capitalize()
+    text = text.strip().replace("\n", " ").replace("\t", " ")
+    if len(text) > 1:
+        text = text[0].upper() + text[1:]
+    return text
 
 
 # Gets the title of the doc
@@ -206,11 +209,12 @@ def rankResults(scores, data):
     results = ""
     resultCount = 0
 
+    print()
     for k,v in sorted(scores.items(), key=operator.itemgetter(1), reverse=True):
         resultCount += 1
         if resultCount > 20:
             break
-        #print(str(resultCount) + ". ", data[k])
+        print(str(resultCount) + ". ", data[k])
 
         # Process url to make soup
         url = data[k]
@@ -219,3 +223,4 @@ def rankResults(scores, data):
         soup = BeautifulSoup(file.read(), features="lxml")
 
         yield getTitle(soup), data[k], getDescription(soup)
+    print()
