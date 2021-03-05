@@ -3,7 +3,7 @@ Search engine that maintains an inverted index of webpages and allows users to q
 
 Creating the inverted index:
 ~~~
-python main.py
+python indexer.py
 ~~~
 You may have to change variables *path* and *pathToWebpages* in main.py before running the file, depending on your file structure.
 
