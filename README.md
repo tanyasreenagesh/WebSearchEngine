@@ -34,5 +34,11 @@ Run gui.py to input search queries and get results.
 
 ### Brief Description of the Python Files:
 
-1. indexer.py:     Create the inverted index and save it to the pickle file invertedPkl.pkl
-2. processing.py:  
+1. indexer.py:     Create the inverted index and save it to the pickle file invertedIdx.pkl
+2. processing.py:  Most of the functions for this python project can be found in this file. It provides all the functions that indexer.py calls to create the 
+                   inverted index, such as creating a list of tokens from an HTML file, lemmatizing and classifying the tokens as valid or not, assigning specific 
+                   weights to tokens in certain HTML tags (such as headers, titles etc.), inserting the (token, doc) pair into the index and computing tf-idf score 
+                   for the tokens.  It also computes tf-idf score for tokens in the query, normalizes these scores, and computes and returns co-sine similarity of 
+                   the query and all the documents in the index. Additionally, it retrieves tokens from a docID, and compresses and decompresses the pickle file. 
+                   Finally, it contains functions whose results are passed to gui.py, such as functions to retrive the title of a doc, a description of a doc, and 
+                   the top 20 results of the query to pass to the gui once the user has typed in a query.
