@@ -17,8 +17,10 @@ import pandas as pd
 import tkinter as tk
 from tkinter import *
 
-path = "webpages/WEBPAGES_RAW/bookkeeping.json"
-with open(path) as file:
+pathToWebpages = "webpages/WEBPAGES_RAW/"
+pathToBook = "webpages/WEBPAGES_RAW/bookkeeping.json"
+
+with open(pathToBook) as file:
     data = json.load(file)
         
 stopWords = {'ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there', 'about', 'once', 'during', 'out',
@@ -32,7 +34,6 @@ stopWords = {'ourselves', 'hers', 'between', 'yourself', 'but', 'again', 'there'
              'which', 'those', 'i', 'after', 'few', 'whom', 't', 'being', 'if', 'theirs', 'my', 'against', 'a', 'by',
              'doing', 'it', 'how', 'further', 'was', 'here', 'than'}
 
-pathToWebpages = "webpages/WEBPAGES_RAW/"
 
 # Returns the lemmatized token if token is valid, False otherwise
 def validToken(token):

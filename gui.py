@@ -1,8 +1,7 @@
 from query import *
 
 # Indexing file
-path = "webpages/WEBPAGES_RAW/bookkeeping.json"
-with open(path) as file:
+with open(pathToBook) as file:
     data = json.load(file)
         
 # Load and decompress invertedIdx from pickle file
