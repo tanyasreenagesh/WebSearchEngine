@@ -13,11 +13,11 @@ Install the following (using pip/conda):
 
 You may have to change the pathToWebpages (file path to webpages folder) and pathToBook (file path to JSON bookkeeping file) variables depending on your directory structure.
 
-To change these variables, go to processing.py and find them on lines 20-21.
+To change these variables, go to processing.py and specify your file paths on lines 20-21.
 
 ### Running the Code:
 
-Run main.py to create the inverted index (the index will be saved as a compressed pickle file - invertedIdk.pbz2).
+Run main.py to create the inverted index (the index will be saved locally as a compressed pickle file - invertedIdk.pbz2).
 
 Run gui.py to start the GUI where you may input search queries and get results.
 
