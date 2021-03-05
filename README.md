@@ -1,6 +1,6 @@
 # web-search-engine
 
-### Instructions for TA/Grading Team:
+## Instructions for TA/Grading Team:
 
 ### Required Installations:
 
