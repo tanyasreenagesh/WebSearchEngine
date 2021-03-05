@@ -17,7 +17,7 @@ To change these variables, go to processing.py and specify your file paths on li
 
 ### Running the Code:
 
-Run main.py to create the inverted index (the index will be saved locally as a compressed pickle file - invertedIdk.pbz2).
+Run indexer.py to create the inverted index (the index will be saved locally as a compressed pickle file - invertedIdk.pbz2).
 
 Run gui.py to start the GUI where you may input search queries and get results.
 
