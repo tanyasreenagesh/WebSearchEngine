@@ -41,4 +41,6 @@ Run gui.py to input search queries and get results.
                    for the tokens.  It also computes tf-idf score for tokens in the query, normalizes these scores, and computes and returns co-sine similarity of 
                    the query and all the documents in the index. Additionally, it retrieves tokens from a docID, and compresses and decompresses the pickle file. 
                    Finally, it contains functions whose results are passed to gui.py, such as functions to retrive the title of a doc, a description of a doc, and 
-                   the top 20 results of the query to pass to the gui once the user has typed in a query.
+                   the top 20 results of the query.
+3. gui.py:         Creates the GUI.
+4. query.py:       Ranks the top 20 results of the query by their score after calling the respective functions from processing.py, and passes this to the GUI.
