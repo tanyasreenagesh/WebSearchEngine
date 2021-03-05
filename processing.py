@@ -17,8 +17,8 @@ import pandas as pd
 import tkinter as tk
 from tkinter import *
 
-pathToWebpages = "webpages/WEBPAGES_RAW/"
-pathToBook = "webpages/WEBPAGES_RAW/bookkeeping.json"
+pathToWebpages = "webpages/WEBPAGES_RAW/"               # path to webpages folder
+pathToBook = "webpages/WEBPAGES_RAW/bookkeeping.json"   # path to JSON bookkeeping file
 
 with open(pathToBook) as file:
     data = json.load(file)
