@@ -31,3 +31,8 @@ Install the following (using pip/conda):
 Run main.py to create the inverted index (the index will be saved as a feather file).
 
 Run gui.py to input search queries and get results.
+
+### Brief Description of the Python Files:
+
+1. indexer.py:     Create the inverted index and save it to the pickle file invertedPkl.pkl
+2. processing.py:  
