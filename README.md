@@ -1,7 +1,5 @@
 # web-search-engine
 
-## Instructions for TA/Grading Team:
-
 ### Required Installations:
 
 Install the following (using pip/conda):
